@@ -34,7 +34,7 @@
       <a href="#contact">Contact Us</a>
     </nav>
 
-    <a class="topbar-cta magnetic" href="#demo">Try Demo</a>
+    <a class="topbar-cta magnetic" href="#consultation">Book Consultation</a>
   </header>
 
   <main>
@@ -145,6 +145,26 @@
         <p>
           We work with teams handling leaks, clogged drains, water heater issues, and burst pipes every day. The system is designed to support field crews, office dispatchers, and business owners in one simple flow.
         </p>
+
+        <div class="team-cards">
+          <article class="glass team-card">
+            <img src="assets/1754814017080.jpeg" alt="Profile of Sarah Mitchell" loading="lazy" />
+            <div>
+              <h3>Astafa Ali</h3>
+              <p class="team-role">Founder & CEO Finova Solutions</p>
+              <p>Astafa helps plumbing teams reduce response time by improving job assignment and route planning workflows.</p>
+            </div>
+          </article>
+
+          <article class="glass team-card">
+            <img src="https://i.pravatar.cc/160?img=15" alt="Profile of Jason Reed" loading="lazy" />
+            <div>
+              <h3>Jason Reed</h3>
+              <p class="team-role">AI Product Specialist</p>
+              <p>Jason works with service businesses to map call handling and make AI triage simple for real field operations.</p>
+            </div>
+          </article>
+        </div>
       </div>
 
       <div class="about-points about-side">
@@ -207,47 +227,31 @@
       </div>
     </section>
 
-    <section class="demo reveal" id="demo">
+    <section class="consultation reveal" id="consultation">
       <div class="section-heading">
-        <span>Try it yourself</span>
-        <h2>See How a Call Gets Dispatched</h2>
+        <span>Book a consultation</span>
+        <h2>Free 15-Minute Consultation</h2>
       </div>
 
-      <div class="demo-layout">
-        <form class="contact-form glass demo-form">
-          <label>
-            Plumbing issue
-            <select id="demo-issue">
-              <option value="Leak">Leak</option>
-              <option value="Clog">Drain clog</option>
-              <option value="Heater">Water heater issue</option>
-              <option value="Pipe">Burst pipe</option>
-            </select>
-          </label>
-          <label>
-            Urgency
-            <select id="demo-urgency">
-              <option value="Standard">Standard</option>
-              <option value="Urgent">Urgent</option>
-              <option value="Emergency">Emergency</option>
-            </select>
-          </label>
-          <label>
-            Area / ZIP
-            <input id="demo-area" type="text" placeholder="e.g. 54000" />
-          </label>
-          <button id="demo-run" type="button" class="button primary full magnetic">Run Demo Dispatch</button>
-        </form>
+      <div class="consultation-container">
+        <div class="consultation-info glass">
+          <h3>What to expect</h3>
+          <p>Schedule a free 15-minute consultation with our team. We'll discuss your plumbing dispatch needs, walk you through how AquaPulse AI works, and answer any questions.</p>
+          <ul class="info-bullets">
+            <li>No credit card required</li>
+            <li>30-minute session</li>
+            <li>Fully optional</li>
+            <li>Available time slots shown below</li>
+          </ul>
+        </div>
 
-        <aside class="contact-info glass demo-result">
-          <h3>Demo output</h3>
-          <p>This demo shows what your team gets right after the call.</p>
-          <div class="info-row"><span>Issue</span><strong id="demo-out-issue">Leak</strong></div>
-          <div class="info-row"><span>Urgency</span><strong id="demo-out-urgency">Standard</strong></div>
-          <div class="info-row"><span>Assigned tech</span><strong id="demo-out-tech">Nearest available plumber</strong></div>
-          <div class="info-row"><span>Estimated arrival</span><strong id="demo-out-eta">12 min</strong></div>
-          <div class="info-row"><span>Customer update</span><strong id="demo-out-note">SMS + live tracking sent</strong></div>
-        </aside>
+        <div class="consultation-calendar">
+          <h3 style="text-align: center; margin-bottom: 20px;">Select a time that works for you</h3>
+          <div id="calendly-embed" class="calendly-embed">
+            <iframe src="https://calendly.com/ali0909abbasi/30min" width="100%" height="100%" frameborder="0" style="border: none;"></iframe>
+          </div>
+        
+        </div>
       </div>
     </section>
 

@@ -6,15 +6,7 @@ const topbar = document.querySelector('.topbar');
 const progressBar = document.querySelector('.scroll-progress');
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorRing = document.querySelector('.cursor-ring');
-const demoIssue = document.getElementById('demo-issue');
-const demoUrgency = document.getElementById('demo-urgency');
-const demoArea = document.getElementById('demo-area');
-const demoRun = document.getElementById('demo-run');
-const demoOutIssue = document.getElementById('demo-out-issue');
-const demoOutUrgency = document.getElementById('demo-out-urgency');
-const demoOutTech = document.getElementById('demo-out-tech');
-const demoOutEta = document.getElementById('demo-out-eta');
-const demoOutNote = document.getElementById('demo-out-note');
+
 const interactiveSelectors = 'a, button, input, textarea, .glass, .floating-chip';
 const hasGSAP = typeof window.gsap !== 'undefined';
 const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
@@ -208,26 +200,7 @@ setInterval(() => {
   if (etaFooter) etaFooter.textContent = currentEta;
 }, 2500);
 
-if (demoRun) {
-  demoRun.addEventListener('click', () => {
-    const issue = demoIssue ? demoIssue.value : 'Leak';
-    const urgency = demoUrgency ? demoUrgency.value : 'Standard';
-    const area = demoArea && demoArea.value.trim().length > 0 ? demoArea.value.trim() : 'your area';
 
-    const urgencyMap = {
-      Standard: { eta: '18 min', tech: 'Scheduled plumber', note: `Customer gets confirmation for ${area}` },
-      Urgent: { eta: '10 min', tech: 'Priority response plumber', note: `Urgent update sent to ${area}` },
-      Emergency: { eta: '6 min', tech: 'Emergency on-call plumber', note: `Emergency tracking link sent for ${area}` },
-    };
-
-    const output = urgencyMap[urgency] || urgencyMap.Standard;
-    if (demoOutIssue) demoOutIssue.textContent = issue;
-    if (demoOutUrgency) demoOutUrgency.textContent = urgency;
-    if (demoOutTech) demoOutTech.textContent = output.tech;
-    if (demoOutEta) demoOutEta.textContent = output.eta;
-    if (demoOutNote) demoOutNote.textContent = output.note;
-  });
-}
 
 // Parallax — gsap.to called on mousemove is expensive; use quickTo instead
 if (heroVisual && parallaxLayer && hasGSAP && !isMobileViewport && enableHeroMotion) {
