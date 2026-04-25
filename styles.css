@@ -725,53 +725,28 @@ main {
   margin: 0;
 }
 
-.info-bullets {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
+.consultation-link {
+  margin-top: 6px;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.consultation-points {
   display: grid;
   gap: 12px;
+  align-content: start;
 }
 
-.info-bullets li {
-  color: var(--muted);
-  padding-left: 24px;
-  position: relative;
-  line-height: 1.6;
-}
-
-.info-bullets li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: var(--accent);
-  font-weight: bold;
-}
-
-.consultation-calendar {
-  background: linear-gradient(180deg, rgba(10, 26, 50, 0.92), rgba(6, 18, 36, 0.88));
-  border: 1px solid var(--card-border);
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr;
-}
-
-.consultation-calendar h3 {
-  color: var(--text);
-  font-size: 1.1rem;
-}
-
-.consultation-calendar p {
-  color: var(--muted);
-}
-
-.calendly-embed {
-  height: 330px;
+.consultation-point {
+  padding: 18px;
   border-radius: 16px;
-  overflow: hidden;
+}
+
+.consultation-point p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .numbers-grid {
@@ -1112,8 +1087,8 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .consultation-calendar {
-    order: -1;
+  .consultation-points {
+    order: 0;
   }
 }
 
