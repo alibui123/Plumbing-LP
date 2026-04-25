@@ -894,6 +894,7 @@ main {
 
 .contact-layout {
   grid-template-columns: 1.1fr 0.9fr;
+  align-items: start;
 }
 
 .contact-form,
@@ -970,6 +971,7 @@ main {
   display: grid;
   align-content: start;
   gap: 14px;
+  align-self: start;
 }
 
 .info-row {
