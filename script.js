@@ -1,230 +1,452 @@
-const eta = document.getElementById('eta');
-const etaFooter = document.getElementById('eta-footer');
-const heroVisual = document.querySelector('.hero-visual');
-const parallaxLayer = document.querySelector('.phone-shell');
-const topbar = document.querySelector('.topbar');
-const progressBar = document.querySelector('.scroll-progress');
-const cursorDot = document.querySelector('.cursor-dot');
-const cursorRing = document.querySelector('.cursor-ring');
+/* ─── CURSOR ─── */
+const blob = document.getElementById('cursor-blob');
+let mx=0,my=0,bx=0,by=0;
+document.addEventListener('mousemove', e=>{mx=e.clientX; my=e.clientY;},{passive:true});
+(function animCursor(){
+  bx+=(mx-bx)*.18; by+=(my-by)*.18;
+  blob.style.transform=`translate(${bx-16}px,${by-16}px)`;
+  requestAnimationFrame(animCursor);
+})();
 
-const interactiveSelectors = 'a, button, input, textarea, .glass, .floating-chip';
-const hasGSAP = typeof window.gsap !== 'undefined';
-const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
-const prefersFinePointer = window.matchMedia('(pointer: fine)').matches;
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const enableHeroMotion = false;
+/* ─── SCROLL PROGRESS ─── */
+const bar = document.getElementById('scroll-bar');
+const nav = document.getElementById('topnav');
+window.addEventListener('scroll',()=>{
+  const pct = window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  bar.style.transform=`scaleX(${pct})`;
+  nav.classList.toggle('inked', window.scrollY>40);
+},{passive:true});
 
-if (hasGSAP && window.ScrollTrigger) {
-  gsap.registerPlugin(ScrollTrigger);
-  // Lenis removed — native scroll is faster; Lenis fights the compositor thread
-  // Increased lag tolerance so GSAP drops frames gracefully instead of catching up
-  gsap.ticker.lagSmoothing(500, 33);
-
-  gsap.set('.reveal', { autoAlpha: 0, y: 34 });
-
-  gsap.utils.toArray('.reveal').forEach((section) => {
-    gsap.to(section, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 1,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 82%',
-      },
-    });
+/* ─── INTERSECTION OBSERVER — REVEAL ─── */
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
   });
+},{threshold:.12});
+document.querySelectorAll('.fade-up,.fade-left,.fade-right').forEach(el=>revealObserver.observe(el));
 
-  gsap.utils.toArray('[data-count]').forEach((counter) => {
-    const target = Number(counter.dataset.count);
-    const value = { n: 0 };
-    let lastWritten = -1;
-
-    gsap.to(value, {
-      n: target,
-      duration: 1.5,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: counter,
-        start: 'top 82%',
-        once: true,
-      },
-      onUpdate: () => {
-        const floored = Math.floor(value.n);
-        // Only touch the DOM when the integer value changes
-        if (floored !== lastWritten) {
-          lastWritten = floored;
-          counter.textContent = floored.toString();
-        }
-      },
-      onComplete: () => {
-        if (target === 24) counter.textContent = '24/7';
-        if (target === 98) counter.textContent = '98%';
-        if (target === 2) counter.textContent = '2';
-      },
-    });
+/* ─── STEP CONTENT REVEAL WITH STAGGER ─── */
+const stepObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const content = e.target.querySelector('.step-content');
+      if(content && !content.classList.contains('visible')){
+        setTimeout(()=>{ content.classList.add('visible'); }, 200);
+      }
+    }
   });
+},{threshold:.3});
+document.querySelectorAll('.step-row').forEach(el=>stepObserver.observe(el));
 
-  // Chips only — glows are handled by CSS animation (no GSAP overhead)
-  if (enableHeroMotion && !isMobileViewport && !prefersReducedMotion) {
-    gsap.to('.floating-chip', {
-      y: -10,
-      duration: 2.8,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1,
-      stagger: 0.25,
-    });
+/* ─── ENHANCE CHAPTER TRANSITIONS WITH SCROLL SHAKE ─── */
+const chapters = document.querySelectorAll('.chapter');
+const ch1Text = document.querySelector('.ch1-text');
+window.addEventListener('scroll', ()=>{
+  const scrollY = window.scrollY;
+  const ch1Rect = chapters[1]?.offsetTop || 0;
+  const progress = Math.max(0, scrollY - ch1Rect + window.innerHeight);
+  const intensity = Math.min(progress / window.innerHeight, 1);
+  
+  if(ch1Text && intensity < 1){
+    const xShake = Math.sin(scrollY*.01) * intensity * 3;
+    ch1Text.style.transform = `translateX(${xShake}px)`;
   }
-}
+},{passive:true});
 
-// Scroll progress: scaleX on a full-width element is cheaper than animating width
-const updateScrollUI = () => {
-  const top = window.scrollY || document.documentElement.scrollTop;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  const percent = max > 0 ? top / max : 0;
-  if (progressBar) progressBar.style.transform = `scaleX(${percent})`;
-  if (topbar) topbar.classList.toggle('scrolled', top > 24);
-};
-
-updateScrollUI();
-
-// Batched in rAF — prevents multiple recalcs per scroll event
-let scrollQueued = false;
-const queueScrollUpdate = () => {
-  if (scrollQueued) return;
-  scrollQueued = true;
-  requestAnimationFrame(() => {
-    updateScrollUI();
-    scrollQueued = false;
-  });
-};
-window.addEventListener('scroll', queueScrollUpdate, { passive: true });
-
-if (prefersFinePointer && !prefersReducedMotion && cursorDot && cursorRing) {
-  // Use event delegation instead of per-element listeners
-  document.addEventListener('mouseover', (e) => {
-    if (e.target.closest(interactiveSelectors)) cursorRing.classList.add('active');
-  }, { passive: true });
-  document.addEventListener('mouseout', (e) => {
-    if (e.target.closest(interactiveSelectors)) cursorRing.classList.remove('active');
-  }, { passive: true });
-
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let ringX = mouseX;
-  let ringY = mouseY;
-  // Dirty flag — rAF loop only runs when there's something to update
-  let cursorDirty = false;
-
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    // Dot: move immediately, no lerp needed — translate only, no layout read
-    cursorDot.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
-    if (!cursorDirty) {
-      cursorDirty = true;
-      requestAnimationFrame(animateCursor);
-    }
-  }, { passive: true });
-
-  const animateCursor = () => {
-    ringX += (mouseX - ringX) * 0.16;
-    ringY += (mouseY - ringY) * 0.16;
-    cursorRing.style.transform = `translate(${ringX - 21}px, ${ringY - 21}px)`;
-    // Keep running only while ring hasn't caught up
-    if (Math.abs(mouseX - ringX) > 0.1 || Math.abs(mouseY - ringY) > 0.1) {
-      requestAnimationFrame(animateCursor);
-    } else {
-      cursorDirty = false;
-    }
+/* ─── COUNTER ANIMATION ─── */
+function animateCounter(el){
+  const target = parseInt(el.dataset.target);
+  const duration = 1800;
+  const start = performance.now();
+  const update = (now)=>{
+    const t = Math.min((now-start)/duration,1);
+    const ease = 1-Math.pow(1-t,4);
+    el.textContent = Math.floor(ease*target).toLocaleString();
+    if(t<1) requestAnimationFrame(update);
+    else el.textContent = target.toLocaleString();
   };
+  requestAnimationFrame(update);
 }
+const counterObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.animation = 'tensorBuild .6s cubic-bezier(.16,1,.3,1) forwards';
+      setTimeout(()=>animateCounter(e.target), 200);
+      counterObserver.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('[data-target]').forEach(el=>counterObserver.observe(el));
 
-if (prefersFinePointer && !prefersReducedMotion) {
-  document.querySelectorAll('.magnetic').forEach((el) => {
-    let rect = null;
-    // Read rect on mouseenter when element is stable, not during mousemove
-    el.addEventListener('mouseenter', () => { rect = el.getBoundingClientRect(); });
-    window.addEventListener('resize', () => { rect = null; }, { passive: true });
-
-    let magPending = false;
-    let lastE = null;
-    el.addEventListener('mousemove', (e) => {
-      lastE = e;
-      if (magPending) return;
-      magPending = true;
-      requestAnimationFrame(() => {
-        if (!rect) rect = el.getBoundingClientRect();
-        const offsetX = lastE.clientX - (rect.left + rect.width / 2);
-        const offsetY = lastE.clientY - (rect.top + rect.height / 2);
-        el.style.transform = `translate(${offsetX * 0.16}px, ${offsetY * 0.16}px)`;
-        magPending = false;
+/* ─── AMPLIFIED MISSED CALLS ANIMATION ─── */
+const callObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const calls = document.querySelectorAll('.missed-call');
+      calls.forEach((mc, idx)=>{ 
+        setTimeout(()=>{ mc.classList.add('show'); }, idx*120); 
       });
-    });
+      const total = document.getElementById('total-loss');
+      if(total) setTimeout(()=>{ total.style.opacity='1'; }, calls.length*120 + 300);
+      callObserver.disconnect();
+    }
+  });
+},{threshold:.2});
+const callStream = document.getElementById('callStream');
+if(callStream) callObserver.observe(callStream);
 
-    el.addEventListener('mouseleave', () => {
-      el.style.transform = 'translate(0,0)';
-    });
-  });
-} else {
-  document.querySelectorAll('.magnetic').forEach((el) => {
-    el.style.transform = 'translate(0,0)';
-  });
+/* ─── ETA TICKER ─── */
+let eta=12;
+const etaEl=document.getElementById('eta-display');
+setInterval(()=>{
+  eta = eta>7 ? eta-1 : 12;
+  if(etaEl) etaEl.textContent=`${eta} min response`;
+},2500);
+
+/* ─── DROPLET CANVAS ─── */
+const canvas = document.getElementById('dropCanvas');
+const ctx = canvas.getContext('2d');
+let drops=[];
+let time = 0;
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
 }
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
 
-// Particles — fixed positions, avoids layout read per particle
-if (heroVisual && enableHeroMotion) {
-  const particleLayer = document.createElement('div');
-  particleLayer.setAttribute('aria-hidden', 'true');
-  particleLayer.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
-  heroVisual.appendChild(particleLayer);
-
-  const count = 6;
-  const cx = 215, cy = 320, radius = 148;
-  for (let i = 0; i < count; i++) {
-    const particle = document.createElement('span');
-    particle.className = 'particle';
-    const angle = (i / count) * Math.PI * 2;
-    particle.style.left = `${cx + Math.cos(angle) * radius}px`;
-    particle.style.top = `${cy + Math.sin(angle) * radius}px`;
-    particle.style.animationDelay = `${(i * 0.4).toFixed(1)}s`;
-    particleLayer.appendChild(particle);
+class Drop {
+  constructor(){
+    this.reset();
+    this.pulse = Math.random();
+  }
+  reset(){
+    this.x = Math.random()*canvas.width;
+    this.y = Math.random()*canvas.height*-.5 - 20;
+    this.r = Math.random()*2.5+.5;
+    this.speed = Math.random()*.8+.3;
+    this.opacity = Math.random()*.5+.1;
+    this.wobble = Math.random()*Math.PI*2;
+    this.wobbleSpeed = (Math.random()-.5)*.02;
+  }
+  update(){
+    this.y += this.speed;
+    this.wobble += this.wobbleSpeed;
+    this.x += Math.sin(this.wobble)*.4;
+    this.pulse += .02;
+    if(this.y>canvas.height+20) this.reset();
+  }
+  draw(){
+    ctx.save();
+    const pulseEffect = Math.sin(this.pulse) * .3 + .7;
+    ctx.globalAlpha = this.opacity * pulseEffect;
+    ctx.fillStyle = '#1af4ff';
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = '#1af4ff';
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y, this.r*.7, this.r*1.5, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
   }
 }
 
-let currentEta = 12;
-setInterval(() => {
-  currentEta = currentEta > 7 ? currentEta - 1 : 12;
-  if (eta) eta.textContent = currentEta;
-  if (etaFooter) etaFooter.textContent = currentEta;
-}, 2500);
+for(let i=0;i<90;i++) drops.push(new Drop());
 
+function animDrops(){
+  time++;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drops.forEach(d=>{d.update();d.draw();});
+  requestAnimationFrame(animDrops);
+}
+animDrops();
 
+/* ─── ENHANCED WAVE ANIMATION ─── */
+const wave1 = document.getElementById('wave1');
+const wave2 = document.getElementById('wave2');
+let wt=0;
 
-// Parallax — gsap.to called on mousemove is expensive; use quickTo instead
-if (heroVisual && parallaxLayer && hasGSAP && !isMobileViewport && enableHeroMotion) {
-  let parallaxRect = heroVisual.getBoundingClientRect();
-  const setX = gsap.quickTo(parallaxLayer, 'x', { duration: 0.35, ease: 'power3.out' });
-  const setY = gsap.quickTo(parallaxLayer, 'y', { duration: 0.35, ease: 'power3.out' });
-  const setRotateX = gsap.quickTo(parallaxLayer, 'rotateX', { duration: 0.35, ease: 'power3.out' });
-  const setRotateY = gsap.quickTo(parallaxLayer, 'rotateY', { duration: 0.35, ease: 'power3.out' });
+function makeWave(t, amp, freq, phase, yOffset){
+  let d = `M0,${yOffset}`;
+  for(let x=0;x<=1440;x+=10){
+    const y = yOffset + Math.sin((x*freq)+t+phase)*amp
+             + Math.sin((x*freq*.5)+t*1.3+phase)*amp*.5
+             + Math.sin((x*freq*.3)+t*0.8+phase)*amp*.3;
+    d += ` L${x},${y}`;
+  }
+  d += ` L1440,600 L0,600 Z`;
+  return d;
+}
 
-  window.addEventListener('resize', () => {
-    parallaxRect = heroVisual.getBoundingClientRect();
+let waveIntensity = 0;
+window.addEventListener('scroll',()=>{
+  const ch2 = document.querySelector('#ch2');
+  if(ch2){
+    const rect = ch2.getBoundingClientRect();
+    waveIntensity = Math.max(0, 1 - Math.abs(rect.top) / window.innerHeight);
+  }
+},{passive:true});
+
+function animWaves(){
+  wt += .012 + waveIntensity * .008;
+  if(wave1) wave1.setAttribute('d', makeWave(wt, 38 + waveIntensity*15, .006, 0, 300));
+  if(wave2) wave2.setAttribute('d', makeWave(wt, 28 + waveIntensity*12, .008, Math.PI, 360));
+  requestAnimationFrame(animWaves);
+}
+animWaves();
+
+/* ─── ADVANCED SCROLL PARALLAX ─── */
+window.addEventListener('scroll',()=>{
+  const y = window.scrollY;
+  const hero = document.querySelector('.cold-open-wrap');
+  if(hero) hero.style.transform = `translateY(${y*.25}px)`;
+  
+  const ch1Inner = document.querySelector('.ch1-inner');
+  if(ch1Inner){
+    const ch1Top = document.querySelector('#ch1')?.offsetTop || 0;
+    const depth = Math.max(0, y - ch1Top + window.innerHeight);
+    const parallaxShift = depth * .08;
+    ch1Inner.style.transform = `translateY(${parallaxShift}px)`;
+  }
+  
+  const chapters = document.querySelectorAll('.chapter');
+  chapters.forEach((ch, idx) => {
+    const rect = ch.getBoundingClientRect();
+    ch.style.opacity = Math.max(0.7, 1 - Math.abs(rect.top / window.innerHeight) * 0.3);
+  });
+  
+  const ctaRings = document.querySelectorAll('.cta-ring');
+  if(ctaRings.length > 0){
+    const ch6Top = document.querySelector('#ch6')?.offsetTop || 0;
+    const distToSection = Math.max(0, ch6Top - y - window.innerHeight);
+    const scale = Math.max(1, 1 + (distToSection / 500) * .3);
+    const opacity = Math.min(1, 1 + (distToSection / 800) * .4);
+    ctaRings.forEach(ring => {
+      ring.style.transform = `scale(${scale})`;
+      ring.style.opacity = Math.min(opacity, 0.6);
+    });
+  }
+},{passive:true});
+
+/* ─── ANIMATED HEADING UNDERLINES ─── */
+document.querySelectorAll('.ch-h2').forEach(h2 => {
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.style.animation = 'headingGlow .8s ease-out forwards';
+      }
+    });
+  }, {threshold:.5});
+  observer.observe(h2);
+});
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes headingGlow {
+    0% { text-shadow: 0 0 0 rgba(57,224,255,.4); }
+    50% { text-shadow: 0 0 30px rgba(57,224,255,.8); }
+    100% { text-shadow: 0 0 20px rgba(57,224,255,.5); }
+  }
+  @keyframes chapterIntense {
+    0% { opacity:.8; transform: scale(.98); }
+    100% { opacity:1; transform: scale(1); }
+  }
+  @keyframes slideLetterIn {
+    0% { opacity:0; transform:translateY(40px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+`;
+document.head.appendChild(style);
+
+/* ─── CONTEXT-AWARE CHAPTER ANIMATIONS ─── */
+let currentChapter = 0;
+const chapterObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const chNum = parseInt(e.target.id.replace('ch',''));
+      currentChapter = chNum;
+      
+      if(chNum === 1){
+        const ch1 = document.querySelector('#ch1');
+        if(ch1){
+          ch1.style.animation = 'chapterIntense .8s ease-out forwards';
+        }
+        document.querySelectorAll('.missed-call').forEach((mc, idx) => {
+          setTimeout(() => {
+            mc.classList.add('show');
+            mc.style.animation = 'slideInReveal .5s cubic-bezier(.16,1,.3,1) forwards';
+          }, idx * 120);
+        });
+      }
+      if(chNum === 2){
+        const claim = document.querySelector('.big-claim');
+        if(claim && !claim.classList.contains('blur-in')){
+          claim.classList.add('blur-in');
+        }
+        document.querySelectorAll('.big-claim span').forEach((span, i) => {
+          if(span.classList.contains('blur-line')) return;
+          span.style.animation = `slideLetterIn .6s cubic-bezier(.16,1,.3,1) forwards`;
+          span.style.animationDelay = `${i * 0.15}s`;
+        });
+      }
+      if(chNum === 3){
+        document.querySelectorAll('.step-row').forEach((row, i) => {
+          setTimeout(() => {
+            const content = row.querySelector('.step-content');
+            if(content) content.classList.add('visible');
+          }, i * 200);
+        });
+      }
+      if(chNum === 4){
+        document.querySelectorAll('.metric-block').forEach((metric, i) => {
+          setTimeout(() => {
+            metric.style.opacity = '1';
+            metric.style.transform = 'translateY(0)';
+          }, i * 100);
+        });
+      }
+      if(chNum === 5){
+        document.querySelectorAll('.team-card').forEach((card, i) => {
+          const delay = i === 0 ? 0.2 : 0.4;
+          card.style.animationDelay = `${delay}s`;
+        });
+      }
+    }
+  });
+}, {threshold:.3});
+
+document.querySelectorAll('.chapter').forEach(ch => chapterObserver.observe(ch));
+
+/* ─── FORM INPUT ENHANCEMENT ─── */
+document.querySelectorAll('.cf-label input, .cf-label textarea').forEach(input => {
+  input.addEventListener('focus', function() {
+    this.parentElement.style.setProperty('--input-glow', '1');
+    this.style.boxShadow = `0 0 0 3px rgba(57,224,255,.25), inset 0 0 0 1px rgba(57,224,255,.6)`;
+  });
+  input.addEventListener('blur', function() {
+    this.parentElement.style.setProperty('--input-glow', '0');
+    this.style.boxShadow = `0 0 0 3px rgba(57,224,255,.12), inset 0 0 0 1px rgba(57,224,255,.3)`;
+  });
+  input.addEventListener('input', function() {
+    const filled = this.value.length > 0;
+    this.style.borderColor = filled ? 'rgba(57,224,255,.7)' : 'rgba(57,224,255,.25)';
+  });
+});
+
+/* ─── ANIMATED FOOTER ─── */
+const footer = document.querySelector('footer');
+if(footer) {
+  const footerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.animation = 'slideInReveal .8s cubic-bezier(.16,1,.3,1) forwards';
+      }
+    });
+  }, {threshold: 0.5});
+  footerObserver.observe(footer);
+}
+
+/* ─── DYNAMIC TEXT REVEAL ON SCROLL ─── */
+const textRevealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e => {
+    if(e.isIntersecting && !e.target.dataset.revealed){
+      e.target.dataset.revealed = 'true';
+      e.target.style.animation = 'fadeUp .8s cubic-bezier(.16,1,.3,1) forwards';
+    }
+  });
+}, {threshold:.2});
+
+document.querySelectorAll('.ch-body, .claim-sub, .cta-sub').forEach(el => {
+  textRevealObserver.observe(el);
+});
+
+/* ─── SCROLL-LINKED VS-TEXT INTENSITY ─── */
+const vsText = document.querySelector('.vs-text');
+if(vsText){
+  window.addEventListener('scroll',()=>{
+    const rect = vsText.getBoundingClientRect();
+    const visibility = Math.max(0, 1 - Math.abs(rect.top) / window.innerHeight);
+    const blur = 10 - visibility * 8;
+    const scale = 0.9 + visibility * 0.1;
+    const rotate = visibility * 5;
+    vsText.style.filter = `blur(${blur}px)`;
+    vsText.style.transform = `scale(${scale}) rotateZ(${rotate}deg)`;
+  }, {passive:true});
+}
+
+/* ─── ADVANCED WORD-BY-WORD REVEAL ─── */
+function revealTextByWord(selector) {
+  const elements = document.querySelectorAll(selector);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.revealed) {
+        entry.target.dataset.revealed = 'true';
+        const text = entry.target.textContent;
+        const words = text.split(' ');
+        entry.target.innerHTML = words.map((word, i) => 
+          `<span style="opacity:0; display:inline-block; vertical-align:baseline; animation:scaleInWord .4s cubic-bezier(.16,1,.3,1) forwards; animation-delay:${i * 0.08}s;">${word}</span>`
+        ).join(' ');
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  elements.forEach(el => observer.observe(el));
+}
+
+revealTextByWord('.ch-body, .claim-sub');
+
+/* ─── ENHANCED STEP CONNECTOR ANIMATION ─── */
+const connectors = document.querySelectorAll('.step-connector::before');
+if(connectors.length > 0) {
+  window.addEventListener('scroll', () => {
+    connectors.forEach((connector, idx) => {
+      const stepRow = connector.closest('.step-row');
+      if(stepRow) {
+        const rect = stepRow.getBoundingClientRect();
+        const progress = Math.max(0, 1 - (rect.top / window.innerHeight));
+        const opacity = Math.min(progress * 1.5, 1);
+        connector.style.opacity = opacity;
+      }
+    });
   }, { passive: true });
+}
 
-  heroVisual.addEventListener('mousemove', (e) => {
-    const x = (e.clientX - parallaxRect.left) / parallaxRect.width - 0.5;
-    const y = (e.clientY - parallaxRect.top) / parallaxRect.height - 0.5;
-    setX(x * 18); setY(y * 18);
-    setRotateX(y * -8); setRotateY(x * 8);
-  }, { passive: true });
+/* ─── MAGNETIC BUTTON EFFECT ─── */
+document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = 'translate(0, 0)';
+  });
+});
 
-  heroVisual.addEventListener('mouseleave', () => {
-    gsap.to(parallaxLayer, {
-      x: 0, y: 0, rotateX: 0, rotateY: 0,
-      duration: 0.6, ease: 'power3.out', overwrite: true,
+/* ─── SCROLL-BASED METRIC GLOW ─── */
+const metrics = document.querySelectorAll('.metric-block');
+window.addEventListener('scroll', () => {
+  metrics.forEach(metric => {
+    const rect = metric.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if(inView) {
+      const intensity = Math.max(0, 1 - Math.abs((window.innerHeight / 2 - rect.top) / window.innerHeight));
+      const num = metric.querySelector('.metric-num');
+      if(num) {
+        num.style.textShadow = `0 0 ${20 + intensity * 40}px rgba(57,224,255,${0.4 + intensity * 0.6}), 0 0 ${10 + intensity * 20}px rgba(72,243,176,${0.2 + intensity * 0.3})`;
+      }
+    }
+  });
+}, { passive: true });
+
+/* ─── SERVICE WORKER CACHE ─── */
+if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {
+      // Cache is optional; fail silently if registration is blocked.
     });
   });
 }
+
