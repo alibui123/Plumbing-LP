@@ -1281,6 +1281,7 @@ footer a { color:rgba(57,224,255,.7); text-decoration:none; }
   .btn-primary, .btn-ghost { padding: 14px 24px; font-size: .75rem; }
   .contact-form-block { padding: 16px; }
   .cf-label input, .cf-label textarea { font-size: .8rem; }
+  .c-row { padding-bottom: 14px; gap: 12px; }
   footer.contact-footer { padding: 20px 0 0; }
 }
 
@@ -1310,6 +1311,9 @@ footer a { color:rgba(57,224,255,.7); text-decoration:none; }
   .team-name { font-size: 1.2rem; }
   .step-content { padding: 12px; }
   .step-num { font-size: 2rem; }
+  .c-row { padding-bottom: 12px; gap: 10px; margin-bottom: 4px; }
+  .c-row span { font-size: .6rem; }
+  .c-row strong { font-size: .8rem; }
   .step-title { font-size: 1.1rem; }
 }
 
