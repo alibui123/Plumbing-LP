@@ -56,6 +56,7 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 20px 6vw;
   transition: background .4s ease;
+  flex-wrap: wrap;
 }
 nav.inked { background: rgba(2,11,20,.9); border-bottom: 1px solid var(--seal); }
 .nav-brand {
@@ -78,6 +79,7 @@ nav.inked { background: rgba(2,11,20,.9); border-bottom: 1px solid var(--seal); 
   text-decoration: none;
   transition: color .25s, text-shadow .25s;
   position:relative;
+  padding: 8px;
 }
 .nav-links a::before {
   content:'';
@@ -319,6 +321,7 @@ body::after {
 .call-stream {
   display:flex; flex-direction:column; gap:12px;
   position:relative;
+  width: 100%;
 }
 .missed-call {
   display:flex; align-items:center; gap:16px;
@@ -1029,6 +1032,8 @@ body::after {
   outline:none;
   transition: border-color .25s, box-shadow .25s, background .25s;
   position:relative;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .cf-label input:focus,
 .cf-label textarea:focus {
@@ -1222,20 +1227,103 @@ footer a { color:rgba(57,224,255,.7); text-decoration:none; }
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width:1024px) {
+  .ch1-inner, .contact-inner, .team-cards { grid-template-columns:1fr; }
+}
+
 @media (max-width:900px) {
-  .ch1-inner,
-  .contact-inner,
-  .team-cards { grid-template-columns:1fr; }
+  .chapter { padding-top:72px; }
+  #ch1 { padding: 80px 5vw; }
+  #ch3 { padding: 40px 5vw; }
+  #ch5 { padding: 80px 5vw; }
+  #contact { padding: 100px 5vw 60px; }
+  nav { padding:14px 5vw; }
+  .nav-links { display:none; }
+  .ch-h2 { font-size: clamp(2rem, 5vw, 4rem); }
+  .big-claim { font-size: clamp(1.8rem, 4.5vw, 3.5rem); }
   .big-numbers { grid-template-columns:1fr 1fr; }
   .step-row { grid-template-columns:1fr; text-align:center; }
   .step-connector { display:none; }
   .step-row:nth-child(even) { direction:ltr; }
-  nav { padding:16px 5vw; }
-  .nav-links { display:none; }
+  .cta-actions { flex-direction: column; }
+  .cta-actions a { width: 100%; }
+}
+
+@media (max-width:768px) {
+  .chapter { padding-top: 60px; padding-left: 5vw; padding-right: 5vw; }
+  #ch0 h1 { font-size: clamp(2.5rem, 11vw, 6rem); }
+  .ch-h2 { font-size: clamp(1.8rem, 4.5vw, 3.5rem); }
+  .big-claim { font-size: clamp(1.6rem, 4vw, 3rem); }
+  .metric-num { font-size: clamp(1.8rem, 5.5vw, 4rem); }
+  .team-card { gap: 16px; }
+  .team-avatar { width: 60px; height: 60px; }
+  .contact-form-block { padding: 20px; }
+  .cf-label input, .cf-label textarea { font-size: .85rem; }
+}
+
+@media (max-width:640px) {
+  .chapter { padding-top: 50px; padding-left: 4vw; padding-right: 4vw; }
+  #ch0 { padding: 0 4vw; }
+  #ch1 { padding: 60px 4vw; }
+  #ch3 { padding: 30px 4vw; }
+  #ch5 { padding: 60px 4vw; }
+  #contact { padding: 80px 4vw 50px; }
+  #ch0 h1 { font-size: clamp(2rem, 10vw, 4.5rem); }
+  .scroll-hint { display: none; }
+  .ch-h2 { font-size: clamp(1.5rem, 4vw, 3rem); }
+  .big-claim { font-size: clamp(1.4rem, 3.5vw, 2.5rem); }
+  .cta-headline { font-size: clamp(1.8rem, 6vw, 4rem); }
+  .big-numbers { grid-template-columns: 1fr; }
+  .metric-block { padding: 24px 12px; }
+  .metric-num { font-size: clamp(1.5rem, 5vw, 3.5rem); }
+  .btn-primary, .btn-ghost { padding: 14px 24px; font-size: .75rem; }
+  .contact-form-block { padding: 16px; }
+  .cf-label input, .cf-label textarea { font-size: .8rem; }
+  footer.contact-footer { padding: 20px 0 0; }
 }
 
 @media (max-width:520px) {
-  .big-numbers { grid-template-columns:1fr; }
-  .team-card { grid-template-columns:1fr; }
-  .team-avatar { width:72px; height:72px; }
+  .chapter { padding-top: 40px; padding-left: 3.5vw; padding-right: 3.5vw; }
+  #ch0 { padding: 0 3.5vw; }
+  #ch1 { padding: 50px 3.5vw; }
+  #ch3 { padding: 25px 3.5vw; }
+  #ch5 { padding: 50px 3.5vw; }
+  #contact { padding: 70px 3.5vw 40px; }
+  nav { padding: 12px 3.5vw; }
+  .nav-brand { font-size: 1rem; }
+  #ch0 h1 { font-size: clamp(1.8rem, 9vw, 3.5rem); line-height: 1; }
+  .cold-tagline { font-size: clamp(.75rem, 1.5vw, .95rem); }
+  .ch-h2 { font-size: clamp(1.3rem, 3.5vw, 2.5rem); }
+  .big-claim { font-size: clamp(1.2rem, 3vw, 2.2rem); }
+  .cta-headline { font-size: clamp(1.5rem, 5vw, 3.5rem); }
+  .big-numbers { grid-template-columns: 1fr; }
+  .metric-block { padding: 18px 8px; }
+  .metric-num { font-size: clamp(1.2rem, 4.5vw, 3rem); }
+  .metric-label { font-size: .6rem; }
+  .btn-primary, .btn-ghost { padding: 12px 20px; font-size: .7rem; }
+  .contact-form-block { padding: 12px; }
+  .cf-label input, .cf-label textarea { padding: 6px 10px; font-size: .75rem; }
+  .team-card { gap: 12px; padding: 24px; }
+  .team-avatar { width: 50px; height: 50px; }
+  .team-name { font-size: 1.2rem; }
+  .step-content { padding: 12px; }
+  .step-num { font-size: 2rem; }
+  .step-title { font-size: 1.1rem; }
+}
+
+@media (max-width:380px) {
+  .chapter { padding-left: 3vw; padding-right: 3vw; }
+  #ch0 h1 { font-size: clamp(1.5rem, 8vw, 3rem); }
+  .ch-h2 { font-size: clamp(1.1rem, 3vw, 2rem); }
+  .big-claim { font-size: clamp(1rem, 2.8vw, 1.8rem); }
+  .metric-num { font-size: clamp(1rem, 4vw, 2.5rem); }
+}
+
+/* ─── TOUCH DEVICE OPTIMIZATIONS ─── */
+@media (hover: none) and (pointer: coarse) {
+  .btn-primary, .btn-ghost { min-height: 44px; min-width: 44px; }
+  .nav-links a, .nav-cta { padding: 10px 12px; }
+  .conn-node { min-height: 50px; min-width: 50px; }
+  .team-card:hover { transform: none; border-color: rgba(57,224,255,.4); }
+  .step-content:hover { transform: none; border-color: rgba(57,224,255,.4); }
 }
