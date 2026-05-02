@@ -1232,6 +1232,8 @@ footer a { color:rgba(57,224,255,.7); text-decoration:none; }
 }
 
 @media (max-width:900px) {
+  #cursor-blob { display: none; }
+  .drip-line { display: none; }
   .chapter { padding-top:72px; }
   #ch1 { padding: 80px 5vw; }
   #ch3 { padding: 40px 5vw; }
