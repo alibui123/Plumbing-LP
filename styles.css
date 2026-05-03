@@ -1295,6 +1295,64 @@ footer a { color:rgba(33,210,237,.7); text-decoration:none; }
   .step-title { font-size: 1.1rem; }
 }
 
+@media (max-width:640px) {
+  /* Splash composition tuned for mobile screens only */
+  #ws-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6vw;
+  }
+
+  .ws-wrench-wrap {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 0 auto 16px;
+    width: fit-content;
+  }
+
+  .ws-wrench-img {
+    width: 140px;
+  }
+
+  .ws-text {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    max-width: 92vw;
+    margin: 0 auto;
+  }
+
+  .ws-brand {
+    font-size: clamp(1.25rem, 7.4vw, 2.1rem);
+    letter-spacing: .08em;
+    line-height: .95;
+  }
+
+  .ws-sub {
+    margin-top: 8px;
+    font-size: clamp(.48rem, 2.2vw, .62rem);
+    letter-spacing: .16em;
+  }
+
+  .ws-corner {
+    width: 18px;
+    height: 18px;
+    opacity: .85;
+  }
+
+  .ws-tl { top: 14px; left: 14px; }
+  .ws-tr { top: 14px; right: 14px; }
+  .ws-bl { bottom: 14px; left: 14px; }
+  .ws-br { bottom: 14px; right: 14px; }
+
+  .ws-progress { height: 2px; }
+}
+
 @media (max-width:380px) {
   .chapter { padding-left: 3vw; padding-right: 3vw; }
   #ch0 h1 { font-size: clamp(1.5rem, 8vw, 3rem); }
