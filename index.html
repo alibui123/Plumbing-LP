@@ -3,12 +3,56 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>AquaPulse AI — The Story</title>
+<title>Finova Solutions — Dispatch Automation for Plumbing Teams</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- ══ SPLASH SCREEN ══ -->
+<!-- ══ WRENCH SPLASH ══ -->
+<div id="ws-root">
+  <div class="ws-particles" id="wsP"></div>
+  <div class="ws-scan"></div>
+
+  <!-- LEFT DIAGONAL PANEL (holds left half of wrench) -->
+  <div class="ws-panel ws-left" id="wsL">
+    <div class="ws-diag-line"></div>
+    <!-- Left half-wrench removed -->
+  </div>
+
+  <!-- RIGHT DIAGONAL PANEL (holds right half of wrench) -->
+  <div class="ws-panel ws-right" id="wsR">
+    <div class="ws-diag-line"></div>
+    <!-- Right half-wrench removed -->
+  </div>
+
+  <!-- Center seam removed -->
+
+  <!-- SHOCKWAVE RINGS on wrench assemble -->
+  <div class="ws-pulse-ring r1"></div>
+  <div class="ws-pulse-ring r2"></div>
+  <div class="ws-pulse-ring r3"></div>
+
+  <!-- FULL WRENCH (revealed after panels close) -->
+  <div class="ws-wrench-wrap" id="wsWrench">
+    <img src="assets/wrench.png" alt="Wrench" class="ws-wrench-img" onerror="this.onerror=null;this.src='assets/wrench.svg'"/>
+  </div>
+
+  <!-- BRAND TEXT -->
+  <div class="ws-text" id="wsText">
+    <span class="ws-brand">Intelligent Plumbing Solutions</span>
+    <span class="ws-sub">Powered by Finova Solutions</span>
+  </div>
+
+  <div class="ws-corner ws-tl"></div>
+  <div class="ws-corner ws-tr"></div>
+  <div class="ws-corner ws-bl"></div>
+  <div class="ws-corner ws-br"></div>
+
+  <div class="ws-progress"><div class="ws-prog-fill"></div></div>
+  <button class="ws-skip" id="wsSkip">ENTER SITE ›</button>
+</div>
 
 <!-- Cursor -->
 <div id="cursor-blob"></div>
@@ -16,10 +60,15 @@
 
 <!-- NAV -->
 <nav id="topnav">
-  <a class="nav-brand" href="#ch0">AquaPulse AI</a>
+  <a class="nav-brand" href="#ch0" aria-label="Finova Solutions home">
+    <img class="nav-brand-logo" src="assets/finova-icon.png" alt="Finova Solutions logo"/>
+    <span class="sr-only">Finova Solutions</span>
+  </a>
   <div class="nav-links">
     <a href="#ch1">Problem</a>
+    <a href="#ch2">Solution</a>
     <a href="#ch3">How It Works</a>
+    <a href="#ch4">Results</a>
     <a href="#ch5">Team</a>
     <a href="#contact">Contact</a>
   </div>
@@ -34,11 +83,11 @@
 
   <div class="cold-open-wrap">
     <span class="chapter-label"></span>
-    <h1>AQUA<br>PULSE</h1>
+    <h1>FINOVA<br>SOLUTIONS</h1>
     <p class="cold-tagline">
-      Every missed call is a flooded basement getting worse.<br>
-      Every wrong dispatch is a day wasted.<br>
-      <strong style="color:var(--water);">This is how we fix that.</strong>
+      <strong style="color:var(--water);">AI Dispatch Automation</strong><br>
+      for Plumbing Companies<br>
+      <span style="font-size:0.9em; opacity:0.85;">Answer every call. Route every emergency. Keep trucks moving.</span>
     </p>
   </div>
 
@@ -61,18 +110,17 @@
     <div class="ch1-text">
       <div class="red-kicker fade-up">
         <span class="red-dot"></span>
-        
       </div>
       <h2 class="ch-h2 fade-up d1">
-        <span>Phones ring.</span>
-        <span><em>Nobody</em></span>
-        <span>answers.</span>
+        <span>Calls come in.</span>
+        <span><em>Jobs</em></span>
+        <span>get missed.</span>
       </h2>
       <p class="ch-body fade-up d2">
-        Plumbing teams miss 30–40% of inbound calls — mostly at night, weekends,
-        or when every tech is already mid-job. Each missed ring is a customer
-        calling your competitor instead. The chaos doesn't stop there:
-        dispatchers guess at who to send, and crews arrive under-informed.
+        Plumbing teams lose revenue when high-value calls hit voicemail — after hours,
+        on weekends, or while every tech is already on site. Every missed ring sends
+        a homeowner or property manager to the next company in the area. Finova fixes
+        the handoff by capturing the job, qualifying the urgency, and keeping the crew informed.
       </p>
     </div>
 
@@ -82,7 +130,7 @@
         <span class="mc-icon">📵</span>
         <div class="mc-info">
           <strong>Burst pipe — basement flooding</strong>
-          <span>Sat 11:48 PM · No answer</span>
+          <span>Sat 11:48 PM · Missed after hours</span>
         </div>
         <span class="mc-loss">−$480</span>
       </div>
@@ -129,8 +177,8 @@
     <svg viewBox="0 0 1440 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1af4ff"/>
-          <stop offset="100%" stop-color="#7c5cff"/>
+          <stop offset="0%" stop-color="#21d2ed"/>
+          <stop offset="100%" stop-color="#c083fc"/>
         </linearGradient>
       </defs>
       <path id="wave1" fill="url(#wg)" opacity=".6"/>
@@ -138,19 +186,17 @@
     </svg>
   </div>
 
- 
-
   <div class="turning-wrap">
     <div class="vs-text fade-up" style="position:relative; z-index:10;">AI</div>
     <h2 class="big-claim fade-up d1">
-      <span class="blur-line">What if the phone</span>
-      <span class="blur-line">never went</span>
-      <span style="color:var(--water);">unanswered?</span>
+      <span class="blur-line">What if every</span>
+      <span class="blur-line">plumbing call was</span>
+      <span style="color:var(--water);">handled instantly?</span>
     </h2>
     <p class="claim-sub fade-up d2">
-      AquaPulse AI plugs in as your always-on voice agent. It picks up every call,
-      understands the emergency, captures the details, and routes the right plumber —
-      without a single human in the loop overnight.
+      Finova Solutions built an always-on AI dispatch layer for plumbing companies.
+      It answers every call, understands the emergency, captures the details,
+      and routes the right plumber — without a human in the loop overnight.
     </p>
   </div>
 </section>
@@ -176,9 +222,9 @@
           <span class="step-num">01</span>
           <div class="step-title">Customer Calls</div>
           <p class="step-desc">
-            AquaPulse AI answers instantly — 24 hours a day, 7 days a week,
-            365 days a year. The AI agent listens, identifies the emergency type
-            (burst pipe, clog, heater failure), extracts location and urgency level,
+            The AI answers instantly — 24 hours a day, 7 days a week,
+            365 days a year. It listens, identifies the emergency type
+            (burst pipe, clog, heater failure), captures the location and urgency,
             and logs everything in under 15 seconds.
           </p>
         </div>
@@ -200,7 +246,7 @@
           <p class="step-desc">
             The system matches the job to the ideal technician: right skill set,
             nearest location, current availability. Dispatch notes are pushed
-            instantly — issue type, customer address, urgency. No back-and-forth.
+            instantly with issue type, customer address, and urgency. No back-and-forth.
             No phone tag.
           </p>
         </div>
@@ -214,7 +260,7 @@
           <p class="step-desc">
             The customer gets an ETA. The dispatcher sees a live board.
             The plumber gets a clean job brief before arrival — not a panicked
-            phone call on the road. Everyone's informed until the wrench is
+            phone call on the road. Everyone stays informed until the wrench is
             back in the van.
           </p>
         </div>
@@ -271,9 +317,10 @@
       <span style="color:var(--water);">know the work.</span>
     </h2>
     <p class="ch-body fade-up d2" style="max-width:560px; margin-top:16px">
-      FinovaSolutions was built with real dispatch workflows in mind — not
+      Finova Solutions was built with real dispatch workflows in mind — not
       theoretical ones. We've sat with field crews, dispatchers, and owners
-      to understand where the friction actually lives.
+      to understand where the friction lives in the plumbing industry, and we
+      bridge that gap with AI that speaks the language of field ops.
     </p>
 
     <div class="team-cards">
@@ -284,7 +331,7 @@
           <div class="team-role">Founder & CEO, Finova Solutions</div>
           <p class="team-bio">
             Astafa helps plumbing teams cut response time by fixing the
-            job assignment and route planning gaps that cost real revenue every day.
+            job assignment and route planning gaps that cost revenue every day.
           </p>
         </div>
       </div>
@@ -323,7 +370,7 @@
     </h2>
     <p class="cta-sub fade-up d2">
       Free 15-minute consultation. We'll walk through your current dispatch
-      setup and show you exactly where AquaPulse AI fits.
+      setup and show you exactly where Finova Solutions fits into your operation.
     </p>
     <div class="cta-actions fade-up d3">
       <a class="btn-primary" href="https://calendly.com/mutaal-finovasolutions/new-meeting" target="_blank" rel="noopener">
@@ -364,33 +411,17 @@
         </div>
       </div>
     </div>
-
-    <div class="contact-form-block fade-right">
-      <label class="cf-label">
-        Full Name
-        <input type="text" placeholder="Your name"/>
-      </label>
-      <label class="cf-label">
-        Phone Number
-        <input type="tel" placeholder="(555) 123-4567"/>
-      </label>
-      <label class="cf-label">
-        Issue Description
-        <textarea rows="4" placeholder="Leak, clog, burst pipe, water heater..."></textarea>
-      </label>
-      <button class="btn-primary" style="width:100%; margin-top:4px; border:none; font-size:.82rem;">
-        Request Dispatch
-      </button>
-    </div>
   </div>
 
   <footer class="contact-footer">
-    <p>© 2026 AquaPulse AI by FinovaSolutions</p>
+    <p>© 2026 Finova Solutions</p>
     <p>Helping plumbing teams answer faster · dispatch smarter</p>
   </footer>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -1,3 +1,44 @@
+/* ─── WRENCH SPLASH ─── */
+(function(){
+  var wsP = document.getElementById('wsP');
+  for(var i = 0; i < 50; i++){
+    var d = document.createElement('div');
+    d.className = 'wsp';
+    var h = Math.random()*22+6;
+    d.style.cssText = 'left:'+(Math.random()*100)+'%;width:1.5px;height:'+h+'px;'+
+      'background:rgba('+(Math.random()<.5?'33,210,237':'192,131,252')+',.18);'+
+      'animation-duration:'+(Math.random()*2.5+1.5)+'s;'+
+      'animation-delay:'+(Math.random()*3)+'s';
+    wsP.appendChild(d);
+  }
+
+  // Half-wrench SVGs and center seam removed — no reveal needed.
+
+  var done = false;
+  function exitSplash(){
+    if(done) return; done = true;
+    var wsWrench = document.getElementById('wsWrench');
+    var wsText   = document.getElementById('wsText');
+    var wsSeam   = document.getElementById('wsSeam');
+    var wsL      = document.getElementById('wsL');
+    var wsR      = document.getElementById('wsR');
+    // Start the swipe-up immediately so the page reveals while text/image remain visible.
+    var root = document.getElementById('ws-root');
+    if(root){
+      // trigger swipe animation right away
+      root.classList.add('ws-swipe');
+      var onEnd = function(){ root.classList.add('ws-gone'); root.removeEventListener('transitionend', onEnd); };
+      root.addEventListener('transitionend', onEnd);
+      // fallback hide after 1.2s
+      setTimeout(function(){ if(!root.classList.contains('ws-gone')) root.classList.add('ws-gone'); }, 1200);
+    }
+    // continue to split panels slightly after swipe starts for effect
+    setTimeout(function(){ if(wsL) wsL.classList.add('ws-split'); if(wsR) wsR.classList.add('ws-split'); }, 200);
+  }
+
+  document.getElementById('wsSkip').addEventListener('click', exitSplash);
+  setTimeout(exitSplash, 4000);
+})();
 /* ─── CURSOR ─── */
 const blob = document.getElementById('cursor-blob');
 let mx=0,my=0,bx=0,by=0;
@@ -141,9 +182,9 @@ class Drop {
     ctx.save();
     const pulseEffect = Math.sin(this.pulse) * .3 + .7;
     ctx.globalAlpha = this.opacity * pulseEffect;
-    ctx.fillStyle = '#1af4ff';
+    ctx.fillStyle = '#21d2ed';
     ctx.shadowBlur = 12;
-    ctx.shadowColor = '#1af4ff';
+    ctx.shadowColor = '#21d2ed';
     ctx.beginPath();
     ctx.ellipse(this.x, this.y, this.r*.7, this.r*1.5, 0, 0, Math.PI*2);
     ctx.fill();
@@ -219,11 +260,11 @@ window.addEventListener('scroll',()=>{
   if(ctaRings.length > 0){
     const ch6Top = document.querySelector('#ch6')?.offsetTop || 0;
     const distToSection = Math.max(0, ch6Top - y - window.innerHeight);
-    const scale = Math.max(1, 1 + (distToSection / 500) * .3);
-    const opacity = Math.min(1, 1 + (distToSection / 800) * .4);
+    const scale = Math.max(1, 1 + (distToSection / 450) * .35);
+    const opacity = Math.min(1, 0.95 + (distToSection / 700) * .3);
     ctaRings.forEach(ring => {
       ring.style.transform = `scale(${scale})`;
-      ring.style.opacity = Math.min(opacity, 0.6);
+      ring.style.opacity = Math.min(opacity, 0.95);
     });
   }
 },{passive:true});
@@ -449,4 +490,82 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     });
   });
 }
+
+/* ─── SPLASH SCREEN WITH GSAP ─── */
+(function() {
+  var drops = document.getElementById('splashDrops');
+  for (var i = 0; i < 55; i++) {
+    var d = document.createElement('div');
+    d.className = 'sdrop';
+    var h = Math.random() * 28 + 8;
+    d.style.cssText = [
+      'left:' + (Math.random()*100) + '%',
+      'height:' + h + 'px',
+      'opacity:' + (Math.random()*0.4+0.1),
+      'animation-duration:' + (Math.random()*2.5+1.5) + 's',
+      'animation-delay:' + (Math.random()*3) + 's'
+    ].join(';');
+    drops.appendChild(d);
+  }
+  
+  var splashRoot = document.getElementById('splash-root');
+  var skipBtn = document.getElementById('splashSkip');
+  var splashRemoved = false;
+  
+  function removeSplash() {
+    if (splashRemoved) return;
+    splashRemoved = true;
+    // no external animation handles to destroy when using PNG
+    if (splashRoot.parentNode) splashRoot.parentNode.removeChild(splashRoot);
+  }
+  
+  // Register GSAP plugin
+  gsap.registerPlugin(ScrollTrigger);
+  
+  // Create splash exit animation using GSAP ScrollTrigger
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: splashRoot,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+      markers: false,
+      onComplete: removeSplash
+    }
+  })
+  .from(splashRoot, {
+    opacity: 1,
+    y: 0,
+    duration: 1
+  }, 0)
+  .to(splashRoot, {
+    opacity: 0,
+    y: -window.innerHeight,
+    duration: 1
+  }, 0);
+  
+  // Skip button handler
+  skipBtn.addEventListener('click', () => {
+    gsap.globalTimeline.getChildren().forEach(tween => {
+      if (tween.scrollTrigger?.trigger === splashRoot) {
+        tween.scrollTrigger.disable();
+      }
+    });
+    gsap.to(splashRoot, {
+      opacity: 0,
+      y: -window.innerHeight * 1.5,
+      duration: 0.6,
+      ease: 'power3.out',
+      onComplete: removeSplash
+    });
+  });
+  
+  // Fallback timeout
+  setTimeout(() => {
+    if (!splashRemoved) {
+      skipBtn.click();
+    }
+  }, 4000);
+})();
+
 
